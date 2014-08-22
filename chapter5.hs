@@ -47,3 +47,24 @@ map' f xs = foldr(\x acc -> f x : acc) [] xs
 elem' :: (Eq a) => a -> [a] -> Bool
 elem' y ys = foldr(\x acc -> if x == y then True else acc) False ys
 
+
+reverse' :: [a] -> [a]
+reverse' = foldl (\acc x -> x : acc) []
+
+product' :: (Num a) => [a] -> a
+product' = foldl (*) 1
+
+-- filter' (\x -> x `mod` 2 == 0) [1,2,3,4,5,6]
+filter' :: (a -> Bool) -> [a] -> [a]
+filter' p = foldr(\x acc -> if p x then x : acc else acc) []
+
+last' :: [a] -> a
+last' = foldl1 (\_ x -> x)
+
+and' :: [Bool] -> Bool
+and' xs = foldr (&&) True xs
+
+sqrtSums :: Int
+sqrtSums = length (takeWhile (<1000) (scanl1 (+) (map sqrt [1..]))) + 1
+
+
