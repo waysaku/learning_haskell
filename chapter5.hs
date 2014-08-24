@@ -68,3 +68,10 @@ sqrtSums :: Int
 sqrtSums = length (takeWhile (<1000) (scanl1 (+) (map sqrt [1..]))) + 1
 
 
+-- funct' :: (Int a) => a -> a
+-- funct' x = x + 1
+
+func' :: (Num a) => a -> [a]
+func' x = replicate 5 x
+
+
