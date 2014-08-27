@@ -74,4 +74,18 @@ sqrtSums = length (takeWhile (<1000) (scanl1 (+) (map sqrt [1..]))) + 1
 func' :: (Num a) => a -> [a]
 func' x = replicate 5 x
 
+sum'' :: (Num a) => [a] -> a
+sum'' xs = foldl (+) 0 xs
+
+-- fn x = ceiling(negate (tan (cos (max 50 x))))
+fn' = ceiling . negate . tan . cos . max 50
+
+oddSquareSum :: Integer
+-- oddSquareSum = sum (takeWhile (<10000)(filter odd (map (^2)[1..])))
+oddSquareSum = sum (takeWhile (<10000)(filter odd (map (^2) [1..] )))
+
+
+
+
+
 
