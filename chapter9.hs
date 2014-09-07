@@ -2,6 +2,9 @@ import Control.Monad
 import Data.Char
 import System.IO
 import Control.Exception
+import System.Directory
+import Data.List
+import System.Environment
 
 {-
 main = forever $ do
@@ -55,9 +58,91 @@ withFile' :: FilePath -> IOMode -> (Handle -> IO a) -> IO a
 withFile' name mode f = bracket (openFile name mode) (\handle -> hClose handle) (\handle -> f handle)
 -}
 
+{-
 main = do
   contents <- readFile "baabaa.txt"
   writeFile "baabaa_Upper.txt" $ map toUpper contents
+-}
+
+
+{-
+main = do
+  todoItem <- getLine
+  appendFile "todo.txt" (todoItem ++ "\n")
+-}
+
+{-
+main = do
+  contents <- readFile "todo.txt"
+  let todoTasks = lines contents
+      numberedTasks = zipWith (\n line -> show n ++ "-" ++ line) [0..] todoTasks
+  putStrLn "These are your ToDo items: "
+  mapM_ putStrLn numberedTasks
+  putStrLn "Which one do you want to delete ? "
+  nuberString <- getLine
+  let number = read nuberString
+      newTodoItems = unlines $ delete (todoTasks !! number) todoTasks
+  
+  bracketOnError (openTempFile "." "temp")
+    (\(tempName, tempHandle) -> do
+      hClose tempHandle
+      removeFile tempName)
+    (\(tempName, tempHandle) -> do
+      hPutStr tempHandle newTodoItems
+      removeFile "todo.txt"
+      renameFile tempName "todo.txt")
+-}
+
+
+dispatch :: String -> [String] -> IO ()
+dispatch "add" = add
+dispatch "view" = view
+dispatch "remove" = remove
+
+main = do
+  (command:argList) <- getArgs
+  dispatch command argList
+
+add :: [String] -> IO ()
+add [fileName, todoItem] = appendFile fileName (todoItem ++ "\n")
+
+view :: [String] -> IO ()
+view [fileName] = do
+  contents <- readFile fileName
+  let todoTasks = lines contents
+      numberedTasks = zipWith (\n line -> show n ++ " - " ++ line) [0..] todoTasks
+  putStr $ unlines numberedTasks
+
+remove :: [String] -> IO ()
+remove [fileName, nuberString] = do
+  contents <- readFile fileName
+  let todoTasks = lines contents
+      numberedTasks = zipWith (\n line -> show n ++ "-" ++ line) [0..] todoTasks
+  putStrLn "These are your ToDo items: "
+  mapM_ putStrLn numberedTasks
+  let number = read nuberString
+      newTodoItems = unlines $ delete (todoTasks !! number) todoTasks
+  
+  bracketOnError (openTempFile "." "temp")
+    (\(tempName, tempHandle) -> do
+      hClose tempHandle
+      removeFile tempName)
+    (\(tempName, tempHandle) -> do
+      hPutStr tempHandle newTodoItems
+      removeFile "todo.txt"
+      renameFile tempName "todo.txt")
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
